@@ -1,7 +1,7 @@
 <h1 align="center">Hi 👋 I'm Patimakorn Srinam-en</h1>
 
 <p align="center">
-  ปฏิมากรณ์ ศรีนามเอ้น · Computer Engineering Student
+   · Computer Engineering Student
 </p>
 
 <p align="center">
