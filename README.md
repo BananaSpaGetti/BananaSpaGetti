@@ -47,11 +47,3 @@
 |------------|------------|
 | [CPE101](https://github.com/BananaSpaGetti/CPE101) | งานและแบบฝึกหัดรายวิชา CPE101 |
 | [True-innovation-launchpad-2026](https://github.com/BananaSpaGetti/True-innovation-launchpad-2026) | โปรเจกต์ True Innovation Launchpad 2026 |
-
----
-
-## 📊 GitHub Stats
-
-<p align="left">
-  <img src="https://github-readme-stats.vercel.app/api?username=BananaSpaGetti&show_icons=true&hide_border=true" alt="GitHub Stats"/>
-</p>
