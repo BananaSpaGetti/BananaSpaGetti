@@ -1,28 +1,17 @@
-<h1 align="center">Hi 👋 I'm Patimakorn Srinam-en</h1>
+<h1 align="center">Hi 👋, I'm Gett</h1>
 
-<p align="center">
-    Computer Engineering Student
-</p>
-
-<p align="center">
-  <a href="mailto:Patimakorn.forwork@gmail.com">
-    <img src="https://img.shields.io/badge/Email-D14836?style=for-the-badge&logo=gmail&logoColor=white" alt="Email"/>
-  </a>
-  <a href="https://github.com/BananaSpaGetti">
-    <img src="https://img.shields.io/badge/GitHub-181717?style=for-the-badge&logo=github&logoColor=white" alt="GitHub"/>
-  </a>
-</p>
+<p align="center">A Computer Engineering student from Thailand</p>
 
 ---
 
 ## 🎓 About Me
 
-- 🏫 นักศึกษาสาขา **วิศวกรรมคอมพิวเตอร์ (CPE)**
-- 🆔 รหัสนักศึกษา **6905604**
-- 📚 กำลังเรียนวิชา **CPE101 – Introduction to Computer Engineering**
-- 🌱 ตอนนี้กำลังเรียนรู้ **C, Git & GitHub, Database (SQL / NoSQL), UX/UI**
-- 🎯 เป้าหมาย: เป็นนักพัฒนาซอฟต์แวร์
-- 📫 ติดต่อผมได้ที่ **Patimakorn.forwork@gmail.com**
+- 🎓 Computer Engineering (CPE) student
+- 📚 Currently taking **CPE101 – Introduction to Computer Engineering**
+- 🌱 Currently learning **C, Git & GitHub, Databases (SQL / NoSQL) and UX/UI**
+- 💡 Interested in software development and web development
+- 🎯 Goal: to become a software developer
+- ⚡ Fun fact: I write more commit messages than actual code
 
 ---
 
@@ -43,7 +32,7 @@
 
 ## 📂 Repositories
 
-| Repository | รายละเอียด |
-|------------|------------|
-| [CPE101](https://github.com/BananaSpaGetti/CPE101) | งานและแบบฝึกหัดรายวิชา CPE101 |
-| [True-innovation-launchpad-2026](https://github.com/BananaSpaGetti/True-innovation-launchpad-2026) | โปรเจกต์ True Innovation Launchpad 2026 |
+| Repository | Description |
+|------------|-------------|
+| [CPE101](https://github.com/BananaSpaGetti/CPE101) | Coursework and exercises for CPE101 |
+| [True-innovation-launchpad-2026](https://github.com/BananaSpaGetti/True-innovation-launchpad-2026) | True Innovation Launchpad 2026 project |
