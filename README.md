@@ -5,7 +5,7 @@
 </p>
 
 <p align="center">
-  <a href="mailto:kanchana25230@gmail.com">
+  <a href="mailto:Patimakorn.forwork@gmail.com">
     <img src="https://img.shields.io/badge/Email-D14836?style=for-the-badge&logo=gmail&logoColor=white" alt="Email"/>
   </a>
   <a href="https://github.com/BananaSpaGetti">
@@ -22,7 +22,7 @@
 - 📚 กำลังเรียนวิชา **CPE101 – Introduction to Computer Engineering**
 - 🌱 ตอนนี้กำลังเรียนรู้ **C, Git & GitHub, Database (SQL / NoSQL), UX/UI**
 - 🎯 เป้าหมาย: เป็นนักพัฒนาซอฟต์แวร์
-- 📫 ติดต่อผมได้ที่ **kanchana25230@gmail.com**
+- 📫 ติดต่อผมได้ที่ **Patimakorn.forwork@gmail.com**
 
 ---
 
