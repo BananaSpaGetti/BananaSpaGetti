@@ -7,7 +7,6 @@
 ## 🎓 About Me
 
 - 🎓 Computer Engineering (CPE) student
-- 📚 Currently taking **CPE101 – Introduction to Computer Engineering**
 - 🌱 Currently learning **C, Git & GitHub, Databases (SQL / NoSQL) and UX/UI**
 - 💡 Interested in software development and web development
 - 🎯 Goal: to become a software developer
