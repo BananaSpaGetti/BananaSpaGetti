@@ -33,4 +33,4 @@
 
 | Repository | Description |
 |------------|-------------|
-| [True-innovation-launchpad-2026](https://github.com/BananaSpaGetti/True-innovation-launchpad-2026) | True Innovation Launchpad 2026 project |
+| [True-innovation-launchpad-2026] | True Innovation Launchpad 2026 project |
