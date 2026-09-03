@@ -1,4 +1,4 @@
-# Gett
+# Gett Patimakorn
 
 Computer Engineering student from Thailand, focused on software development.
 
