@@ -159,6 +159,19 @@ capacity factor 60–90 % → 60–47 USD/t ดังนั้นช่วงท
 
 ปริมาณที่ใช้ภายในโรงไฟฟ้ามีน้อยมากเมื่อเทียบกับ CO₂ ที่ดักจับได้ จึงควรส่งขายให้อุตสาหกรรมยางและฟอกหนังเป็นหลัก
 
+## 5. งานวิจัยที่คล้ายกันและอ่านฟรีได้ (open access)
+
+| งานวิจัย | ประเด็นที่เกี่ยวข้อง |
+|---|---|
+| Lungkadee et al. (2024) *Decarbonizing a Thai coal power plant: effect of flue gas loads on carbon capture performance and economics*, Applied Engineering Letters 9(1) 12–21 — [PDF](https://aeletters.com/wp-content/uploads/2024/03/AEL00392.pdf) | **โรงไฟฟ้าแม่เมาะ**, MEA, Aspen Plus: ต้นทุนดักจับ **54.90 USD/t CO₂** ที่ไอเสีย 100 % (61.90 ที่ 50 %, 134.68 ที่ 10 %); TOTEX 109 M$/ปี — สอดคล้องกับค่า ~50 USD/t ในหัวข้อ 1 |
+| Cuevas-Castillo et al. (2025) *Techno-economic and life cycle assessment of power-to-formic acid production using direct air capture and green hydrogen*, Cleaner Eng. Technol. 26, 100929 — [PDF](https://eprints.whiterose.ac.uk/id/eprint/234494/) | ราคาขายขั้นต่ำ (MSP) **£1,290/t** เทียบกรดฟอร์มิกทั่วไป £560/t; GWP 191 เทียบ 2,190 kg CO₂e/t (ลด 92 %); ใช้ ReCiPe เหมือนบทความหลัก |
+| Rumayor et al. (2018) *Formic Acid Manufacture: Carbon Dioxide Utilization Alternatives*, Applied Sciences 8, 914 — [doi:10.3390/app8060914](https://doi.org/10.3390/app8060914) | เปรียบเทียบเส้นทาง CO₂ → กรดฟอร์มิก (ไฮโดรจิเนชัน vs ไฟฟ้าเคมี) กับแบบเดิม |
+| (2022) *Implementation of Formic Acid as a LOHC: TEA and LCA of Formic Acid Produced via CO₂ Utilization*, Catalysts 12, 1113 — [doi:10.3390/catal12101113](https://doi.org/10.3390/catal12101113) | TEA + LCA กรดฟอร์มิกจาก CO₂ ที่ดักจับ |
+| (2025) *Synthesis, Design and Techno-Economic Evaluation of a Formic Acid Production Plant from Carbon Dioxide*, Processes 13, 3626 — [doi:10.3390/pr13113626](https://doi.org/10.3390/pr13113626) | ออกแบบโรงงานไฮโดรจิเนชัน CO₂ แบบต่อเนื่อง + ต้นทุน |
+| Thonemann & Pizzol (2019) *Consequential LCA of carbon capture and utilization technologies within the chemical industry*, Energy Environ. Sci. — [doi:10.1039/c9ee00914k](https://doi.org/10.1039/c9ee00914k) | LCA ของ CCU หลายผลิตภัณฑ์ รวมกรดฟอร์มิกและเมทานอล |
+| (2023) *Formic acid production through electrochemical reduction of CO₂: A life cycle assessment*, Energy Conv. Manag. X — [ScienceDirect](https://www.sciencedirect.com/science/article/pii/S2590174523000971) | LCA เส้นทางไฟฟ้าเคมี |
+| (2025) *Life cycle assessment of formic acid synthesis utilizing CO₂ from direct air capture*, RSC Sustainability — [HTML](https://pubs.rsc.org/en/content/articlehtml/2025/su/d5su00111k) | LCA แบบ cradle-to-gate ใช้ความร้อนเหลือทิ้ง |
+
 ## การรันแบบจำลอง
 
 ```bash
