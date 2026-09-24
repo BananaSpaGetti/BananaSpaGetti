@@ -71,13 +71,12 @@ STACK = dict(A, elec_thb_kwh=3.0, steam_thb_gj=100, capex_usd=14e6,
 # Formic acid is the main product, so the recommended case avoids the fertilizer by-product.
 STACK_AMINE = dict(STACK, route="amine")
 SCENARIOS = {
-    "standalone factory 10,000 t/yr": A,
+    "standalone factory, NH3 route": A,
     "at stack, NH3 route, fertilizer sold 8": STACK,
-    "at stack, pilot 1,000 t/yr": dict(STACK, output_t_yr=1000),
-    "at stack, 10,000 t/yr + solar PPA 2.5": dict(STACK, elec_thb_kwh=2.5),
     "at stack, NH3 route, fertilizer not sold": dict(STACK, as_thb_kg=0),
-    "at stack, amine route (no by-product)": STACK_AMINE,
-    "at stack, amine route + solar PPA 2.5": dict(STACK, route="amine", elec_thb_kwh=2.5),
+    "at stack, amine route (recommended)": STACK_AMINE,
+    "at stack, amine route + solar PPA 2.5": dict(STACK_AMINE, elec_thb_kwh=2.5),
+    "at stack, amine route, pilot 1,000 t/yr": dict(STACK_AMINE, output_t_yr=1000),
 }
 
 
