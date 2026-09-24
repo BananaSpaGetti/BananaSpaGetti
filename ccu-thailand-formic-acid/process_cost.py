@@ -30,7 +30,8 @@ A = dict(
     steam_thb_gj=270,
     water_thb_m3=30,            # RO + DI treated cooling water, 10 L per kg H2
     other_thb_per_t=1400,       # Ru catalyst make-up, labour, maintenance, analysis (CoA)
-    capex_usd=20e6,             # whole plant: capture skid, PEM ~2.5 MW, reactor, separation, tanks
+    capex_usd=20e6,             # standalone plant at output_ref_t_yr: capture skid, PEM ~2.5 MW, reactor, separation, tanks
+    output_ref_t_yr=10000,      # size capex_usd refers to; other sizes scale with the 0.6 rule
     usd_thb=34,
     discount=0.08,
     life_yr=20,
@@ -40,6 +41,23 @@ A = dict(
 
 def crf(r, n):
     return r * (1 + r) ** n / ((1 + r) ** n - 1)
+
+
+def capex(a):
+    # six-tenths rule: double the size costs ~1.5x, not 2x
+    return a["capex_usd"] * (a["output_t_yr"] / a["output_ref_t_yr"]) ** 0.6
+
+
+# Unit fitted at the Bang Pakong stack instead of a separate factory: no land or buildings,
+# flue gas tapped from the duct at the stack base, LP steam and cooling water from the plant,
+# electricity at EGAT's own generation cost, shared operators.
+STACK = dict(A, elec_thb_kwh=3.0, steam_thb_gj=100, capex_usd=14e6, other_thb_per_t=1000)
+SCENARIOS = {
+    "standalone factory 10,000 t/yr": A,
+    "at Bang Pakong stack 10,000 t/yr": STACK,
+    "at stack, pilot 1,000 t/yr": dict(STACK, output_t_yr=1000),
+    "at stack, 10,000 t/yr + solar PPA 2.5": dict(STACK, elec_thb_kwh=2.5),
+}
 
 
 def cost(a):
@@ -58,7 +76,7 @@ def cost(a):
         "sulfuric acid H2SO4": h2so4 * 1000 * a["h2so4_thb_kg"],
         "steam (distillation)": a["steam_gj_per_t"] * a["steam_thb_gj"],
         "catalyst, labour, upkeep": a["other_thb_per_t"],
-        "CAPEX recovery": a["capex_usd"] * a["usd_thb"] * crf(a["discount"], a["life_yr"]) / a["output_t_yr"],
+        "CAPEX recovery": capex(a) * a["usd_thb"] * crf(a["discount"], a["life_yr"]) / a["output_t_yr"],
         "ammonium sulfate sold": -as_t * 1000 * a["as_thb_kg"],
     }
     flows = dict(co2=co2, h2=h2, nh3=nh3, h2so4=h2so4, as_t=as_t)
@@ -89,5 +107,13 @@ def main(a=A):
         print(f"  {key:16s} {lo:>10g} -> {v[0]:5.1f} | {hi:>10g} -> {v[1]:5.1f}")
 
 
+def compare():
+    print("\nScenarios (THB/kg of 85 % formic acid):")
+    for name, a in SCENARIOS.items():
+        items, _ = cost(a)
+        print(f"  {name:40s} {sum(items.values())/1000:5.1f}   CAPEX {capex(a)/1e6:5.1f} M USD")
+
+
 if __name__ == "__main__":
     main()
+    compare()

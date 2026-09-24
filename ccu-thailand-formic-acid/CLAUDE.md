@@ -13,6 +13,9 @@ farmers (mainly rubber latex coagulation).
   thermal + combined-cycle, natural gas (fuel oil / diesel backup); see `bang_pakong_co2.py`.
   Earlier work in this folder (README.md, cost_model.py) modelled **Mae Moh (lignite)**;
   keep both, but new work should target Bang Pakong.
+- **Deployment:** not a separate factory. The unit is retrofitted at the Bang Pakong stack
+  (flue gas tapped from the duct at the stack base), sharing the plant's land, LP steam, cooling
+  water, power and operators. `process_cost.py` has standalone vs stack scenarios.
 - **Market:** rubber, leather and textile plants in the Eastern Economic Corridor (EEC),
   close to Bang Pakong, so logistics are short.
 - **Process (team's design):** flue gas → dry → LNG cold box (−150 to −180 °C) → CO₂ freezes
