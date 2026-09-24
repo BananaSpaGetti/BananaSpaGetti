@@ -21,6 +21,7 @@ A = dict(
     yield_overall=0.90,         # CO2/H2/NH3 that ends up as product (losses in capture, reaction, distillation)
     elec_thb_kwh=4.2,           # industrial grid tariff; solar PPA ~2.5-3
     pem_kwh_per_kg_h2=55,
+    h2_compress_kwh_per_kg=3,   # PEM outlet ~30 bar -> reactor pressure
     capture_kwh_per_t_co2=150,  # blowers, drying, pumps (cold itself comes from LNG)
     lng_cold_thb_per_t_co2=0,   # LNG cold is waste energy at a regas terminal; >0 if it must be bought/transported
     nh3_thb_kg=18,
@@ -29,7 +30,11 @@ A = dict(
     steam_gj_per_t=10,          # distillation to 85 %
     steam_thb_gj=270,
     water_thb_m3=30,            # RO + DI treated cooling water, 10 L per kg H2
-    other_thb_per_t=1400,       # Ru catalyst make-up, labour, maintenance, analysis (CoA)
+    as_evap_gj_per_t_as=2.0,    # evaporate/crystallise ammonium sulfate solution (double-effect)
+    catalyst_thb_per_t=500,     # Ru catalyst make-up + lab analysis (CoA)
+    maint_frac=0.03,            # maintenance, share of CAPEX per year
+    insure_frac=0.01,           # insurance, share of CAPEX per year
+    labour_thb_yr=7.8e6,        # 15 staff x 40,000 THB x 13 months
     capex_usd=20e6,             # standalone plant at output_ref_t_yr: capture skid, PEM ~2.5 MW, reactor, separation, tanks
     output_ref_t_yr=10000,      # size capex_usd refers to; other sizes scale with the 0.6 rule
     usd_thb=34,
@@ -54,7 +59,8 @@ def capex(a):
 # Unit fitted at the Bang Pakong stack instead of a separate factory: no land or buildings,
 # flue gas tapped from the duct at the stack base, LP steam and cooling water from the plant,
 # electricity at EGAT's own generation cost, shared operators.
-STACK = dict(A, elec_thb_kwh=3.0, steam_thb_gj=100, capex_usd=14e6, other_thb_per_t=1000)
+STACK = dict(A, elec_thb_kwh=3.0, steam_thb_gj=100, capex_usd=14e6,
+             labour_thb_yr=4.2e6)  # 8 staff; power-plant operators cover shifts
 SCENARIOS = {
     "standalone factory 10,000 t/yr": A,
     "at Bang Pakong stack 10,000 t/yr": STACK,
@@ -72,13 +78,17 @@ def cost(a):
     as_t = a["grade"] * M["AS"] / 2 / M["HCOOH"]  # t sold (on product actually made)
     items = {
         "H2 (PEM electricity)": h2 * a["pem_kwh_per_kg_h2"] * a["elec_thb_kwh"],
+        "H2 compression": h2 * a["h2_compress_kwh_per_kg"] * a["elec_thb_kwh"],
         "water for PEM": h2 * 0.01 * a["water_thb_m3"],
         "CO2 capture (LNG cold)": co2 * (a["capture_kwh_per_t_co2"] * a["elec_thb_kwh"]
                                          + a["lng_cold_thb_per_t_co2"]),
         "ammonia NH3": nh3 * 1000 * a["nh3_thb_kg"],
         "sulfuric acid H2SO4": h2so4 * 1000 * a["h2so4_thb_kg"],
         "steam (distillation)": a["steam_gj_per_t"] * a["steam_thb_gj"],
-        "catalyst, labour, upkeep": a["other_thb_per_t"],
+        "fertilizer drying (steam)": as_t * a["as_evap_gj_per_t_as"] * a["steam_thb_gj"],
+        "catalyst + lab analysis": a["catalyst_thb_per_t"],
+        "maintenance + insurance": capex(a) * a["usd_thb"] * (a["maint_frac"] + a["insure_frac"]) / a["output_t_yr"],
+        "labour": a["labour_thb_yr"] / a["output_t_yr"],
         "CAPEX recovery": capex(a) * a["usd_thb"] * crf(a["discount"], a["life_yr"]) / a["output_t_yr"],
         "ammonium sulfate sold": -as_t * 1000 * a["as_thb_kg"],
     }
