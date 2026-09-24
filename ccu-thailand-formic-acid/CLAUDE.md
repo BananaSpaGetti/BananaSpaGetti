@@ -44,6 +44,7 @@ farmers (mainly rubber latex coagulation).
 | `lab_scale_calc.py` | autoclave stoichiometry, limiting reactant, theoretical/actual yield, pressure safety check, PEM electrolyzer charge/time |
 | `esp32_demo/` | demo control panel firmware; `sim_model.h` holds the physics and uses the same assumptions as `lab_scale_calc.py` |
 | `cryo_capture.py` | frost points of flue gas components, CO₂ capture vs temperature, LNG cold needed, max dry ice per autoclave charge |
+| `process_cost.py` | levelized cost per t of 85 % formic acid for the LNG-cold + NH₃ + H₂SO₄ route, with ammonium sulfate credit and sensitivity |
 | `bang_pakong_co2.py` | Bang Pakong emissions (assumed CF/EF ranges) vs CO₂ a formic acid plant needs |
 | `market/` | HS 29151100 import values (Jan 2023–2026), farmer prices, target distributors + interview questions (`distributors.md`) |
 | `EGAT_capture_cost_research.md` | what is and is not published about EGAT capture costs |
