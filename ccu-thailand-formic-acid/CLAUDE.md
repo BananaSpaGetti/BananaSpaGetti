@@ -4,8 +4,10 @@ Engineering innovation project (student). Read this first, then README.md.
 
 ## Goal
 
-Capture industrial CO₂ and convert it to formic acid (HCOOH) to replace imported
-formic acid used by Thai industry, supporting Thailand's net-zero transition.
+Capture industrial CO₂ and convert it to formic acid (HCOOH) to replace part of the
+formic acid Thailand imports (not all of it is imported), supporting the net-zero transition.
+Sales channel: sell to existing formic acid importers/distributors, who resell to
+farmers (mainly rubber latex coagulation).
 
 - **CO₂ source (current target):** EGAT Bang Pakong power plant (gas-fired, Chachoengsao).
   Earlier work in this folder (README.md, cost_model.py) modelled **Mae Moh (lignite)**;
@@ -54,5 +56,9 @@ If you change an assumption, change it in both `lab_scale_calc.py` and `esp32_de
    ≈ 3 MPa and ≈ 200 °C. `lab_scale_calc.py` checks against the lower limit.
 4. **Demo values are simulated.** The ESP32 panel shows "SIM" on screen; do not present its
    numbers as measurements.
-5. **"100 % imported" needs a source** (Thai customs statistics, HS 2915.11) before it goes
-   on a slide.
+5. **Not 100 % imported** (confirmed by the team). Get the real import volume and CIF price
+   from Thai customs statistics (HS 2915.11) before putting numbers on a slide.
+6. **Bang Pakong CO₂ is falling every year**, but formic acid needs only ~0.96 t CO₂ per t,
+   a tiny slipstream of a power plant's emissions. The real risk is unit retirement, not
+   volume: plan modular capture and a backup CO₂ source (e.g. fermentation or gas-separation
+   CO₂ in the EEC).
