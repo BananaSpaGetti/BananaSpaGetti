@@ -15,7 +15,13 @@ farmers (mainly rubber latex coagulation).
   keep both, but new work should target Bang Pakong.
 - **Market:** rubber, leather and textile plants in the Eastern Economic Corridor (EEC),
   close to Bang Pakong, so logistics are short.
-- **Reaction:** CO₂ + H₂ → HCOOH (catalyst), H₂ from a PEM electrolyzer (green H₂).
+- **Process (team's design):** flue gas → dry → LNG cold box (−150 to −180 °C) → CO₂ freezes
+  as dry ice, N₂/O₂/Ar pass through (`cryo_capture.py`) → dry ice into autoclave with Ru catalyst
+  + ammonia → H₂ from PEM electrolysis of treated cooling water, CO₂:H₂ = 1:1 → ammonium formate
+  → acidify (e.g. H₂SO₄ → HCOOH + ammonium sulfate fertilizer) → distil to 85 %.
+  Heating ammonium formate gives formamide, not formic acid.
+  Electrolyzer power must be renewable: grid/gas power (~0.4 kg CO₂/kWh × ~55 kWh/kg H₂) emits
+  about as much CO₂ as the process uses.
 
 ## Hardware being designed
 
@@ -37,6 +43,7 @@ farmers (mainly rubber latex coagulation).
 | `cost_model.py` | capture cost + levelized formic acid cost (plant scale, Mae Moh assumptions) |
 | `lab_scale_calc.py` | autoclave stoichiometry, limiting reactant, theoretical/actual yield, pressure safety check, PEM electrolyzer charge/time |
 | `esp32_demo/` | demo control panel firmware; `sim_model.h` holds the physics and uses the same assumptions as `lab_scale_calc.py` |
+| `cryo_capture.py` | frost points of flue gas components, CO₂ capture vs temperature, LNG cold needed, max dry ice per autoclave charge |
 | `bang_pakong_co2.py` | Bang Pakong emissions (assumed CF/EF ranges) vs CO₂ a formic acid plant needs |
 | `market/` | HS 29151100 import values (Jan 2023–2026), farmer prices, target distributors + interview questions (`distributors.md`) |
 | `EGAT_capture_cost_research.md` | what is and is not published about EGAT capture costs |
