@@ -35,7 +35,10 @@ A = dict(
     usd_thb=34,
     discount=0.08,
     life_yr=20,
-    pack_thb_per_gallon=20,     # 5 kg HDPE gallon + label, if we pack ourselves
+    # sold in bulk to importers (they pack and distribute); stainless/lined tanker, hazmat driver
+    truck_load_t=20,
+    truck_trip_thb=6000,        # Bang Pakong -> importer warehouse (Bangkok / Samut Prakan area)
+    sell_thb_kg=19,             # price offered to importers, below their assumed CIF 17-25
 )
 
 
@@ -94,10 +97,15 @@ def main(a=A):
     for k, v in items.items():
         print(f"  {k:26s} {v:9,.0f} THB/t  ({v/gross:5.0%} of gross)")
     print(f"  {'TOTAL':26s} {total:9,.0f} THB/t = {total/1000:.1f} THB/kg")
-    g = total / 1000 * 5
-    print(f"\nPer 5 kg gallon: {g:.0f} THB + packing {a['pack_thb_per_gallon']} = "
-          f"{g + a['pack_thb_per_gallon']:.0f} THB  (farmer pays 262-300 wholesale, 240-380 retail)")
-    print("Import CIF (assumed): 17-25 THB/kg")
+    truck = a["truck_trip_thb"] / a["truck_load_t"]
+    delivered = total + truck
+    trips = a["output_t_yr"] / a["truck_load_t"]
+    print(f"\nBulk delivery to importer: {a['truck_trip_thb']:,} THB per {a['truck_load_t']} t tanker "
+          f"= {truck:,.0f} THB/t; {trips:,.0f} trips/yr")
+    print(f"Delivered cost {delivered:,.0f} THB/t = {delivered/1000:.2f} THB/kg  (importer's CIF assumed 17-25)")
+    m = a["sell_thb_kg"] * 1000 - delivered
+    print(f"Sell at {a['sell_thb_kg']} THB/kg -> margin {m:,.0f} THB/t x {a['output_t_yr']:,} t "
+          f"= {m*a['output_t_yr']/1e6:,.1f} M THB/yr")
 
     print("\nSensitivity (THB/kg):")
     for key, lo, hi in [("elec_thb_kwh", 2.5, 5.0), ("nh3_thb_kg", 12, 25),
@@ -115,5 +123,5 @@ def compare():
 
 
 if __name__ == "__main__":
-    main()
+    main(STACK)
     compare()
