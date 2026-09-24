@@ -9,7 +9,8 @@ formic acid Thailand imports (not all of it is imported), supporting the net-zer
 Sales channel: sell to existing formic acid importers/distributors, who resell to
 farmers (mainly rubber latex coagulation).
 
-- **CO₂ source (current target):** EGAT Bang Pakong power plant (gas-fired, Chachoengsao).
+- **CO₂ source (current target):** EGAT Bang Pakong power plant, Chachoengsao: 3,248 MW,
+  thermal + combined-cycle, natural gas (fuel oil / diesel backup); see `bang_pakong_co2.py`.
   Earlier work in this folder (README.md, cost_model.py) modelled **Mae Moh (lignite)**;
   keep both, but new work should target Bang Pakong.
 - **Market:** rubber, leather and textile plants in the Eastern Economic Corridor (EEC),
@@ -36,6 +37,8 @@ farmers (mainly rubber latex coagulation).
 | `cost_model.py` | capture cost + levelized formic acid cost (plant scale, Mae Moh assumptions) |
 | `lab_scale_calc.py` | autoclave stoichiometry, limiting reactant, theoretical/actual yield, pressure safety check, PEM electrolyzer charge/time |
 | `esp32_demo/` | demo control panel firmware; `sim_model.h` holds the physics and uses the same assumptions as `lab_scale_calc.py` |
+| `bang_pakong_co2.py` | Bang Pakong emissions (assumed CF/EF ranges) vs CO₂ a formic acid plant needs |
+| `market/` | HS 29151100 import values (Jan 2023–2026) and farmer prices → market size and price chain |
 | `EGAT_capture_cost_research.md` | what is and is not published about EGAT capture costs |
 | `summaries/`, `pdfs/` | Thai summaries and open-access PDFs of related papers |
 
