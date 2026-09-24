@@ -72,7 +72,7 @@ STACK = dict(A, elec_thb_kwh=3.0, steam_thb_gj=100, capex_usd=14e6,
 STACK_AMINE = dict(STACK, route="amine")
 SCENARIOS = {
     "standalone factory 10,000 t/yr": A,
-    "at Bang Pakong stack 10,000 t/yr": STACK,
+    "at stack, NH3 route, fertilizer sold 8": STACK,
     "at stack, pilot 1,000 t/yr": dict(STACK, output_t_yr=1000),
     "at stack, 10,000 t/yr + solar PPA 2.5": dict(STACK, elec_thb_kwh=2.5),
     "at stack, NH3 route, fertilizer not sold": dict(STACK, as_thb_kg=0),
@@ -144,8 +144,9 @@ def main(a=A):
           f"= {m*a['output_t_yr']/1e6:,.1f} M THB/yr")
 
     print("\nSensitivity (THB/kg):")
-    for key, lo, hi in [("elec_thb_kwh", 2.5, 5.0), ("nh3_thb_kg", 12, 25),
-                        ("as_thb_kg", 4, 12), ("capex_usd", 10e6, 40e6),
+    chem = ([("nh3_thb_kg", 12, 25), ("as_thb_kg", 4, 12)] if a["route"] == "nh3"
+            else [("amine_thb_kg", 40, 160), ("amine_steam_gj_per_t", 10, 20)])
+    for key, lo, hi in [("elec_thb_kwh", 2.5, 5.0)] + chem + [("capex_usd", 10e6, 40e6),
                         ("yield_overall", 0.8, 0.95), ("output_t_yr", 3000, 20000)]:
         v = [sum(cost(dict(a, **{key: x}))[0].values()) / 1000 for x in (lo, hi)]
         print(f"  {key:16s} {lo:>10g} -> {v[0]:5.1f} | {hi:>10g} -> {v[1]:5.1f}")
