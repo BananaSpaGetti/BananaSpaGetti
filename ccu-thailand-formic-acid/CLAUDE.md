@@ -20,9 +20,11 @@ farmers (mainly rubber latex coagulation).
   close to Bang Pakong, so logistics are short.
 - **Process (team's design):** flue gas → dry → LNG cold box (−150 to −180 °C) → CO₂ freezes
   as dry ice, N₂/O₂/Ar pass through (`cryo_capture.py`) → dry ice into autoclave with Ru catalyst
-  + ammonia → H₂ from PEM electrolysis of treated cooling water, CO₂:H₂ = 1:1 → ammonium formate
-  → acidify (e.g. H₂SO₄ → HCOOH + ammonium sulfate fertilizer) → distil to 85 %.
-  Heating ammonium formate gives formamide, not formic acid.
+  + base → H₂ from PEM electrolysis of treated cooling water, CO₂:H₂ = 1:1 → formate → HCOOH 85 %.
+  **Formic acid is the main product.** Recommended base: a recyclable tertiary amine (formate–amine
+  adduct split by heat, amine returns to the reactor, no by-product; 17.9 THB/kg at the stack).
+  The team's first idea, ammonia + H₂SO₄, makes 1.2 t ammonium sulfate per t product and only pays
+  if that fertilizer is sold (27.9 THB/kg if not). Heating ammonium formate gives formamide, not formic acid.
   Electrolyzer power must be renewable: grid/gas power (~0.4 kg CO₂/kWh × ~55 kWh/kg H₂) emits
   about as much CO₂ as the process uses.
 
@@ -47,7 +49,7 @@ farmers (mainly rubber latex coagulation).
 | `lab_scale_calc.py` | autoclave stoichiometry, limiting reactant, theoretical/actual yield, pressure safety check, PEM electrolyzer charge/time |
 | `esp32_demo/` | demo control panel firmware; `sim_model.h` holds the physics and uses the same assumptions as `lab_scale_calc.py` |
 | `cryo_capture.py` | frost points of flue gas components, CO₂ capture vs temperature, LNG cold needed, max dry ice per autoclave charge |
-| `process_cost.py` | levelized cost per t of 85 % formic acid for the LNG-cold + NH₃ + H₂SO₄ route, with ammonium sulfate credit and sensitivity |
+| `process_cost.py` | levelized cost per t of 85 % formic acid, amine route (default) or NH₃ + H₂SO₄ route, scenarios and sensitivity |
 | `bang_pakong_co2.py` | Bang Pakong emissions (assumed CF/EF ranges) vs CO₂ a formic acid plant needs |
 | `market/` | HS 29151100 import values (Jan 2023–2026), farmer prices, target distributors + interview questions (`distributors.md`) |
 | `EGAT_capture_cost_research.md` | what is and is not published about EGAT capture costs |

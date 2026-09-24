@@ -31,6 +31,12 @@ A = dict(
     steam_thb_gj=270,
     water_thb_m3=30,            # RO + DI treated cooling water, 10 L per kg H2
     as_evap_gj_per_t_as=2.0,    # evaporate/crystallise ammonium sulfate solution (double-effect)
+    route="nh3",                # "nh3": NH3 base + H2SO4 -> ammonium sulfate by-product
+                                # "amine": recyclable tertiary amine, adduct split by heat, no by-product
+    amine_kg_per_t=5,           # amine make-up (losses) per t product, amine route
+    amine_thb_kg=80,
+    amine_steam_gj_per_t=15,    # adduct splitting + distillation (replaces steam_gj_per_t)
+    amine_capex_factor=1.10,    # extra splitting column
     catalyst_thb_per_t=500,     # Ru catalyst make-up + lab analysis (CoA)
     maint_frac=0.03,            # maintenance, share of CAPEX per year
     insure_frac=0.01,           # insurance, share of CAPEX per year
@@ -53,7 +59,8 @@ def crf(r, n):
 
 def capex(a):
     # six-tenths rule: double the size costs ~1.5x, not 2x
-    return a["capex_usd"] * (a["output_t_yr"] / a["output_ref_t_yr"]) ** 0.6
+    f = a["amine_capex_factor"] if a["route"] == "amine" else 1.0
+    return f * a["capex_usd"] * (a["output_t_yr"] / a["output_ref_t_yr"]) ** 0.6
 
 
 # Unit fitted at the Bang Pakong stack instead of a separate factory: no land or buildings,
@@ -61,11 +68,16 @@ def capex(a):
 # electricity at EGAT's own generation cost, shared operators.
 STACK = dict(A, elec_thb_kwh=3.0, steam_thb_gj=100, capex_usd=14e6,
              labour_thb_yr=4.2e6)  # 8 staff; power-plant operators cover shifts
+# Formic acid is the main product, so the recommended case avoids the fertilizer by-product.
+STACK_AMINE = dict(STACK, route="amine")
 SCENARIOS = {
     "standalone factory 10,000 t/yr": A,
     "at Bang Pakong stack 10,000 t/yr": STACK,
     "at stack, pilot 1,000 t/yr": dict(STACK, output_t_yr=1000),
     "at stack, 10,000 t/yr + solar PPA 2.5": dict(STACK, elec_thb_kwh=2.5),
+    "at stack, NH3 route, fertilizer not sold": dict(STACK, as_thb_kg=0),
+    "at stack, amine route (no by-product)": STACK_AMINE,
+    "at stack, amine route + solar PPA 2.5": dict(STACK, route="amine", elec_thb_kwh=2.5),
 }
 
 
@@ -82,16 +94,27 @@ def cost(a):
         "water for PEM": h2 * 0.01 * a["water_thb_m3"],
         "CO2 capture (LNG cold)": co2 * (a["capture_kwh_per_t_co2"] * a["elec_thb_kwh"]
                                          + a["lng_cold_thb_per_t_co2"]),
-        "ammonia NH3": nh3 * 1000 * a["nh3_thb_kg"],
-        "sulfuric acid H2SO4": h2so4 * 1000 * a["h2so4_thb_kg"],
-        "steam (distillation)": a["steam_gj_per_t"] * a["steam_thb_gj"],
-        "fertilizer drying (steam)": as_t * a["as_evap_gj_per_t_as"] * a["steam_thb_gj"],
+    }
+    if a["route"] == "nh3":
+        items.update({
+            "ammonia NH3": nh3 * 1000 * a["nh3_thb_kg"],
+            "sulfuric acid H2SO4": h2so4 * 1000 * a["h2so4_thb_kg"],
+            "steam (distillation)": a["steam_gj_per_t"] * a["steam_thb_gj"],
+            "fertilizer drying (steam)": as_t * a["as_evap_gj_per_t_as"] * a["steam_thb_gj"],
+        })
+    else:
+        items.update({
+            "amine make-up": a["amine_kg_per_t"] * a["amine_thb_kg"],
+            "steam (split + distil)": a["amine_steam_gj_per_t"] * a["steam_thb_gj"],
+        })
+    items.update({
         "catalyst + lab analysis": a["catalyst_thb_per_t"],
         "maintenance + insurance": capex(a) * a["usd_thb"] * (a["maint_frac"] + a["insure_frac"]) / a["output_t_yr"],
         "labour": a["labour_thb_yr"] / a["output_t_yr"],
         "CAPEX recovery": capex(a) * a["usd_thb"] * crf(a["discount"], a["life_yr"]) / a["output_t_yr"],
-        "ammonium sulfate sold": -as_t * 1000 * a["as_thb_kg"],
-    }
+    })
+    if a["route"] == "nh3":
+        items["ammonium sulfate sold"] = -as_t * 1000 * a["as_thb_kg"]
     flows = dict(co2=co2, h2=h2, nh3=nh3, h2so4=h2so4, as_t=as_t)
     return items, flows
 
@@ -102,8 +125,11 @@ def main(a=A):
     gross = sum(v for v in items.values() if v > 0)
     print(f"Per tonne of {a['grade']:.0%} formic acid (plant {a['output_t_yr']:,} t/yr, "
           f"overall yield {a['yield_overall']:.0%}):")
-    print(f"  uses  CO2 {f['co2']:.3f} t, H2 {f['h2']:.1f} kg, NH3 {f['nh3']:.3f} t, "
-          f"H2SO4 {f['h2so4']:.3f} t;  makes ammonium sulfate {f['as_t']:.2f} t")
+    if a["route"] == "nh3":
+        print(f"  uses  CO2 {f['co2']:.3f} t, H2 {f['h2']:.1f} kg, NH3 {f['nh3']:.3f} t, "
+              f"H2SO4 {f['h2so4']:.3f} t;  makes ammonium sulfate {f['as_t']:.2f} t")
+    else:
+        print(f"  uses  CO2 {f['co2']:.3f} t, H2 {f['h2']:.1f} kg; amine recycled, no by-product")
     for k, v in items.items():
         print(f"  {k:26s} {v:9,.0f} THB/t  ({v/gross:5.0%} of gross)")
     print(f"  {'TOTAL':26s} {total:9,.0f} THB/t = {total/1000:.1f} THB/kg")
@@ -133,5 +159,5 @@ def compare():
 
 
 if __name__ == "__main__":
-    main(STACK)
+    main(STACK_AMINE)
     compare()
