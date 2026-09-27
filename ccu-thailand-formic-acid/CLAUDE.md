@@ -81,6 +81,12 @@ If you change an assumption, change it in both `lab_scale_calc.py` and `esp32_de
    gas phase). Real systems add a base (e.g. triethylamine, KHCO₃/NaHCO₃) and get **formate**,
    which then needs acidification or amine splitting and distillation to get HCOOH.
    A catalyst (Ru/Ir) only speeds the reaction; it does not make a ΔG > 0 reaction go. The base does.
+   Amine choice: primary/secondary amines (MEA, DEA, piperazine) capture fast but form formamides
+   with formic acid when heated, so the heat-split step needs a tertiary amine. On-site options:
+   (a) two loops: MEA capture + stripping with plant LP steam, separate tertiary-amine reactor loop
+   (proven, recommended base case); (b) one loop: tertiary-amine blend captures CO₂ and goes straight
+   to the reactor (saves stripping + compression; research-stage, needs O₂ removed first because the
+   Ru catalyst is O₂-sensitive and CCGT flue gas has ~12 % O₂).
 3. **Pressure limit:** the gauge reads 0–5 MPa but PTFE-lined autoclaves are usually rated
    ≈ 3 MPa and ≈ 200 °C. `lab_scale_calc.py` checks against the lower limit.
 4. **Demo values are simulated.** The ESP32 panel shows "SIM" on screen; do not present its
