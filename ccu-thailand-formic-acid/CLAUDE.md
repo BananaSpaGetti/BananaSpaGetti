@@ -56,6 +56,7 @@ farmers (mainly rubber latex coagulation).
 | `cost_model.py` | capture cost + levelized formic acid cost (plant scale, Mae Moh assumptions) |
 | `lab_scale_calc.py` | autoclave stoichiometry, limiting reactant, theoretical/actual yield, pressure safety check, PEM electrolyzer charge/time |
 | `esp32_demo/` | demo control panel firmware; `sim_model.h` holds the physics and uses the same assumptions as `lab_scale_calc.py` |
+| `process_flow.md` | corrected process flow diagram (mermaid, Thai) with temperatures/pressures and source ids; fixes to the team's hand-drawn diagram |
 | `SOURCES.md` | every number with its source link and status (read / search excerpt / team / method), plus what needs a quote |
 | `params.py` | all sourced inputs in one place, each with a `src` id into SOURCES.md; `python3 params.py` lists them |
 | `process_cost.py` | headline cost from sourced numbers only (Tzitzili 2025 benchmark + NETL capture cost); `--assumed` runs the old model |
