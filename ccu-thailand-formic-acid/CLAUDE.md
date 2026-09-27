@@ -10,7 +10,11 @@ Sales channel: sell to existing formic acid importers/distributors, who resell t
 farmers (mainly rubber latex coagulation).
 
 - **CO₂ source (current target):** EGAT Bang Pakong power plant, Chachoengsao: 3,248 MW,
-  thermal + combined-cycle, natural gas (fuel oil / diesel backup); see `bang_pakong_co2.py`.
+  thermal + combined-cycle, natural gas (fuel oil / diesel backup). The team's block-level
+  heat-rate method (IPCC Tier 2, CFs assumed) gives **4.55 Mt CO₂/yr, 12.2 TWh/yr**; see `bang_pakong_co2.py`.
+  **Size the product to the market, not to this potential:** converting all of it would make
+  ~2.6 Mt HCOOH/yr (≈300× Thai imports, ≈2.6× world demand) and the PEM would need ~half the
+  plant's output (`scale_check.py`). The design uses a ~0.2 % slipstream for 10,000 t/yr.
   Earlier work in this folder (README.md, cost_model.py) modelled **Mae Moh (lignite)**;
   keep both, but new work should target Bang Pakong.
 - **Deployment:** not a separate factory. The unit is retrofitted at the Bang Pakong stack
@@ -50,7 +54,8 @@ farmers (mainly rubber latex coagulation).
 | `esp32_demo/` | demo control panel firmware; `sim_model.h` holds the physics and uses the same assumptions as `lab_scale_calc.py` |
 | `cryo_capture.py` | frost points of flue gas components, CO₂ capture vs temperature, LNG cold needed, max dry ice per autoclave charge |
 | `process_cost.py` | levelized cost per t of 85 % formic acid, amine route (default) or NH₃ + H₂SO₄ route, scenarios and sensitivity |
-| `bang_pakong_co2.py` | Bang Pakong emissions (assumed CF/EF ranges) vs CO₂ a formic acid plant needs |
+| `bang_pakong_co2.py` | Bang Pakong emissions by generating block (team's heat-rate method) vs CO₂ a formic acid plant needs |
+| `scale_check.py` | all captured CO₂ → formic acid (team deck) vs market-sized 10,000 t/yr: output, H₂, PEM power, CO₂ from gas power |
 | `market/` | HS 29151100 import values (Jan 2023–2026), farmer prices, target distributors + interview questions (`distributors.md`) |
 | `EGAT_capture_cost_research.md` | what is and is not published about EGAT capture costs |
 | `summaries/`, `pdfs/` | Thai summaries and open-access PDFs of related papers |
@@ -68,6 +73,7 @@ If you change an assumption, change it in both `lab_scale_calc.py` and `esp32_de
 2. **CO₂ + H₂ → HCOOH is thermodynamically uphill without a base** (ΔG° ≈ +33 kJ/mol in the
    gas phase). Real systems add a base (e.g. triethylamine, KHCO₃/NaHCO₃) and get **formate**,
    which then needs acidification or amine splitting and distillation to get HCOOH.
+   A catalyst (Ru/Ir) only speeds the reaction; it does not make a ΔG > 0 reaction go. The base does.
 3. **Pressure limit:** the gauge reads 0–5 MPa but PTFE-lined autoclaves are usually rated
    ≈ 3 MPa and ≈ 200 °C. `lab_scale_calc.py` checks against the lower limit.
 4. **Demo values are simulated.** The ESP32 panel shows "SIM" on screen; do not present its
