@@ -23,7 +23,10 @@ A = dict(
     pem_kwh_per_kg_h2=55,
     h2_compress_kwh_per_kg=3,   # PEM outlet ~30 bar -> reactor pressure
     capture_kwh_per_t_co2=150,  # blowers, drying, pumps (cold itself comes from LNG)
-    lng_cold_thb_per_t_co2=0,   # LNG cold is waste energy at a regas terminal; >0 if it must be bought/transported
+    # LNG cold: EGAT's LNG passes through the cold box as its vaporiser, then goes on to the
+    # turbines as fuel, so the gas is not used up; only the cold is borrowed (cryo_capture.py).
+    lng_t_per_t_co2=1.18,       # LNG flow through the cold box, 85 % recuperation
+    lng_premium_thb_per_t=0,    # 0 if LNG is regasified on site; trucking premium if it must be brought in
     nh3_thb_kg=18,
     h2so4_thb_kg=5,
     as_thb_kg=8,                # ammonium sulfate (21-0-0) sold ex-works, below retail bag price
@@ -76,6 +79,7 @@ SCENARIOS = {
     "at stack, NH3 route, fertilizer not sold": dict(STACK, as_thb_kg=0),
     "at stack, amine route (recommended)": STACK_AMINE,
     "at stack, amine route + solar PPA 2.5": dict(STACK_AMINE, elec_thb_kwh=2.5),
+    "at stack, amine, LNG trucked in (+2,500/t)": dict(STACK_AMINE, lng_premium_thb_per_t=2500),
     "at stack, amine route, pilot 1,000 t/yr": dict(STACK_AMINE, output_t_yr=1000),
 }
 
@@ -92,7 +96,7 @@ def cost(a):
         "H2 compression": h2 * a["h2_compress_kwh_per_kg"] * a["elec_thb_kwh"],
         "water for PEM": h2 * 0.01 * a["water_thb_m3"],
         "CO2 capture (LNG cold)": co2 * (a["capture_kwh_per_t_co2"] * a["elec_thb_kwh"]
-                                         + a["lng_cold_thb_per_t_co2"]),
+                                         + a["lng_t_per_t_co2"] * a["lng_premium_thb_per_t"]),
     }
     if a["route"] == "nh3":
         items.update({
@@ -155,7 +159,7 @@ def compare():
     print("\nScenarios (THB/kg of 85 % formic acid):")
     for name, a in SCENARIOS.items():
         items, _ = cost(a)
-        print(f"  {name:40s} {sum(items.values())/1000:5.1f}   CAPEX {capex(a)/1e6:5.1f} M USD")
+        print(f"  {name:44s} {sum(items.values())/1000:5.1f}   CAPEX {capex(a)/1e6:5.1f} M USD")
 
 
 if __name__ == "__main__":
