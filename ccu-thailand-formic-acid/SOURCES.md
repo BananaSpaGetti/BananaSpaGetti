@@ -34,6 +34,7 @@
 | S16 | กฎ 0.6 (six-tenths rule) ปรับค่าลงทุนตามขนาด | ค่าลงทุน ∝ (ขนาด)^0.6 | Peters, Timmerhaus & West, *Plant Design and Economics for Chemical Engineers* (ตำราวิศวกรรมเคมีมาตรฐาน) | 📐 |
 | S18 | ขนาดโรงงานและเกรดสินค้า | 10,000 t/yr กรด 85% (เกรดอุตสาหกรรมที่ขายให้สวนยาง) | การตัดสินใจออกแบบของทีม ขนาดเลือกให้ใกล้ปริมาณนำเข้า (ต้องยืนยันด้วยปริมาณนำเข้าจริงเป็น กก.) | 👥 |
 | S19 | สภาวะการทำงาน MEA 30% | MEA เข้าหอดูดซับ 40 °C (อุตสาหกรรม 42–45 °C); MEA อิ่มออก 50–60 °C; อุ่นเป็น 100–110 °C; หอไล่ 115–125 °C, ~150 kPa; loading อิ่ม 0.5 / จาง 0.2 mol/mol | [Pilot-scale 30 wt% MEA (ScienceDirect 2023)](https://www.sciencedirect.com/science/article/pii/S030626192301557X), [Comparative Performance of 40% and 30% MEA](https://eprints.whiterose.ac.uk/id/eprint/155639/1/Comparative%20Performance%20of%2040%25%20and%2030%25%20MEA.pdf), [Stripper operating parameters (ScienceDirect)](https://www.sciencedirect.com/science/article/abs/pii/S1750583613000856) | 🔎 |
+| S20 | CO₂ ของกรดฟอร์มิก (GWP) | แบบเดิม 2,190 · แบบใช้ CO₂ (DAC + H₂ สีเขียว) 191 kg CO₂e/t | Cuevas-Castillo et al. 2025, Cleaner Eng. Technol. 26:100929 — [White Rose](https://eprints.whiterose.ac.uk/id/eprint/234494/) (อ้างใน README หัวข้อ 5) | 🔎 |
 | S17 | LNG ของ กฟผ. สำหรับบางปะกง | ~1.2 Mt/yr (2566–2570) แปรสภาพที่ LNG มาบตาพุด แห่งที่ 2 แล้วส่งเป็นก๊าซทางท่อ | [EGAT 2023-10-03](https://www.egat.co.th/home/en/20231003e/), [The Nation](https://www.nationthailand.com/pr-news/pr-news/40044331) | 🔎 |
 
 ## ต้องขอใบเสนอราคา (ไม่มีแหล่งสาธารณะ ไม่ใช้ในตัวเลขหลัก)
