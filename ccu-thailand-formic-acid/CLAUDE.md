@@ -25,9 +25,12 @@ farmers (mainly rubber latex coagulation).
 - **Process (team's design):** flue gas → dry → LNG cold box (−150 to −180 °C) → CO₂ freezes
   as dry ice, N₂/O₂/Ar pass through (`cryo_capture.py`). The cold comes from EGAT's own LNG:
   ~26 t/day of LNG runs through the cold box as its vaporiser and then goes on to the turbines as
-  fuel, so no gas is consumed. **Team premise: everything (LNG cold, capture, H₂, reactor, trials)
-  happens on site at EGAT Bang Pakong**, so the base case treats the cold as free (17.9 THB/kg).
-  Trucked-in LNG (~20.5 THB/kg) is kept only as a fallback scenario → dry ice into autoclave with Ru catalyst
+  fuel, so no gas is consumed. **Team premise: everything happens on site at EGAT Bang Pakong.**
+  Checked Sep 2026: EGAT does import LNG for Bang Pakong (~1.2 Mt/yr, 2023–2027, as power-plant fuel),
+  but it is unloaded and regasified at LNG Map Ta Phut Terminal 2 (Rayong) and reaches Bang Pakong
+  as pipeline gas; the planned upper-Gulf FSRU for Bang Pakong was postponed. So there is no LNG
+  cold on site today: base case 17.9 THB/kg assumes free cold; trucked-in LNG ~20.5 THB/kg is the
+  realistic on-site option → dry ice into autoclave with Ru catalyst
   + base → H₂ from PEM electrolysis of treated cooling water, CO₂:H₂ = 1:1 → formate → HCOOH 85 %.
   **Formic acid is the main product.** Recommended base: a recyclable tertiary amine (formate–amine
   adduct split by heat, amine returns to the reactor, no by-product; 17.9 THB/kg at the stack).
