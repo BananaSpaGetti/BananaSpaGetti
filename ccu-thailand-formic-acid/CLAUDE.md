@@ -19,25 +19,22 @@ farmers (mainly rubber latex coagulation).
   keep both, but new work should target Bang Pakong.
 - **Deployment:** not a separate factory. The unit is retrofitted at the Bang Pakong stack
   (flue gas tapped from the duct at the stack base), sharing the plant's land, LP steam, cooling
-  water, power and operators. `process_cost.py` has standalone vs stack scenarios.
+  water, power and operators. **Everything happens on site at EGAT Bang Pakong, no transport.**
 - **Market:** rubber, leather and textile plants in the Eastern Economic Corridor (EEC),
   close to Bang Pakong, so logistics are short.
-- **Process (team's design):** flue gas → dry → LNG cold box (−150 to −180 °C) → CO₂ freezes
-  as dry ice, N₂/O₂/Ar pass through (`cryo_capture.py`). The cold comes from EGAT's own LNG:
-  ~26 t/day of LNG runs through the cold box as its vaporiser and then goes on to the turbines as
-  fuel, so no gas is consumed. **Team premise: everything happens on site at EGAT Bang Pakong.**
-  Checked Sep 2026: EGAT does import LNG for Bang Pakong (~1.2 Mt/yr, 2023–2027, as power-plant fuel),
-  but it is unloaded and regasified at LNG Map Ta Phut Terminal 2 (Rayong) and reaches Bang Pakong
-  as pipeline gas; the planned upper-Gulf FSRU for Bang Pakong was postponed. So there is no LNG
-  cold on site today: base case 17.9 THB/kg assumes free cold; trucked-in LNG ~20.5 THB/kg is the
-  realistic on-site option → dry ice into autoclave with Ru catalyst
-  + base → H₂ from PEM electrolysis of treated cooling water, CO₂:H₂ = 1:1 → formate → HCOOH 85 %.
-  **Formic acid is the main product.** Recommended base: a recyclable tertiary amine (formate–amine
-  adduct split by heat, amine returns to the reactor, no by-product; 17.9 THB/kg at the stack).
-  The team's first idea, ammonia + H₂SO₄, makes 1.2 t ammonium sulfate per t product and only pays
-  if that fertilizer is sold (27.9 THB/kg if not). Heating ammonium formate gives formamide, not formic acid.
-  Electrolyzer power must be renewable: grid/gas power (~0.4 kg CO₂/kWh × ~55 kWh/kg H₂) emits
-  about as much CO₂ as the process uses.
+- **Process (current design, Sep 2026):** flue gas → 30 wt% MEA absorber → stripper heated with
+  plant waste steam → CO₂ → reactor (Ru catalyst + recyclable tertiary amine, H₂ from PEM
+  electrolysis of treated cooling water / flue-gas condensate, CO₂:H₂ = 1:1) → formate–amine
+  adduct split by heat → HCOOH 85 %, amine back to the reactor. **Formic acid is the main product.**
+  **LNG is dropped:** Bang Pakong has no liquid LNG on site (EGAT's LNG is regasified at Map Ta Phut
+  Terminal 2 and arrives by pipeline); `cryo_capture.py` is kept only as a record.
+  The team's first idea, ammonia + H₂SO₄, makes 1.2 t ammonium sulfate per t product; rejected.
+  Heating ammonium formate gives formamide, not formic acid.
+  Electrolyzer power must be renewable: on gas power it gives back ~60–80 % of the CO₂ used (`scale_check.py`).
+- **Numbers rule:** every number must trace to `SOURCES.md` via `params.py`. Headline cost is
+  `process_cost.py` = Tzitzili et al. 2025 plant scaled to 10,000 t/yr + NETL NGCC capture cost
+  ≈ **39.4 THB/kg of 85 % acid**. The older 15.7 / 17.9 THB/kg figures came from assumed prices
+  (`process_cost_assumed.py`, `--assumed`) and must not be used on slides.
 
 ## Hardware being designed
 
@@ -59,15 +56,19 @@ farmers (mainly rubber latex coagulation).
 | `cost_model.py` | capture cost + levelized formic acid cost (plant scale, Mae Moh assumptions) |
 | `lab_scale_calc.py` | autoclave stoichiometry, limiting reactant, theoretical/actual yield, pressure safety check, PEM electrolyzer charge/time |
 | `esp32_demo/` | demo control panel firmware; `sim_model.h` holds the physics and uses the same assumptions as `lab_scale_calc.py` |
-| `cryo_capture.py` | frost points of flue gas components, CO₂ capture vs temperature, LNG cold needed, max dry ice per autoclave charge |
-| `process_cost.py` | levelized cost per t of 85 % formic acid, amine route (default) or NH₃ + H₂SO₄ route, scenarios and sensitivity |
+| `SOURCES.md` | every number with its source link and status (read / search excerpt / team / method), plus what needs a quote |
+| `params.py` | all sourced inputs in one place, each with a `src` id into SOURCES.md; `python3 params.py` lists them |
+| `process_cost.py` | headline cost from sourced numbers only (Tzitzili 2025 benchmark + NETL capture cost); `--assumed` runs the old model |
+| `process_cost_assumed.py` | old assumption-based levelized cost model (amine or NH₃ route); reference only |
+| `cryo_capture.py` | LNG-cold / dry-ice capture calc; **not used** since LNG was dropped |
 | `bang_pakong_co2.py` | Bang Pakong emissions by generating block (team's heat-rate method) vs CO₂ a formic acid plant needs |
 | `scale_check.py` | all captured CO₂ → formic acid (team deck) vs market-sized 10,000 t/yr: output, H₂, PEM power, CO₂ from gas power |
 | `market/` | HS 29151100 import values (Jan 2023–2026), farmer prices, target distributors + interview questions (`distributors.md`) |
 | `EGAT_capture_cost_research.md` | what is and is not published about EGAT capture costs |
 | `summaries/`, `pdfs/` | Thai summaries and open-access PDFs of related papers |
 
-Checks: `python3 lab_scale_calc.py`, `python3 cost_model.py`,
+Checks: `python3 params.py`, `python3 process_cost.py`, `python3 bang_pakong_co2.py`,
+`python3 scale_check.py`, `python3 market/market_size.py`, `python3 lab_scale_calc.py`, `python3 cost_model.py`,
 `cd esp32_demo && g++ -std=c++11 -o sim_test sim_test.cpp && ./sim_test` (exit 0 = pass).
 If you change an assumption, change it in both `lab_scale_calc.py` and `esp32_demo/sim_model.h`.
 

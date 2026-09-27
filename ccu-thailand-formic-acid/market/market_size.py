@@ -1,52 +1,40 @@
-"""Thai formic acid imports (HS 29151100) -> rough market size and CO2 need.
+"""Thai formic acid imports (HS 29151100) and prices, sourced numbers only.
 
-Input: imports_hs29151100_jan.csv, CIF value in THB for January only (as supplied
-by the team from customs statistics). No quantity column yet, so tonnes are
-estimated from an ASSUMED CIF price range. Replace with real kg data when available.
-Run: python3 market_size.py
+Input: imports_hs29151100_jan.csv, CIF value in THB for January only (team screenshots of
+customs statistics, SOURCES.md S14). No quantity (kg) yet, so import tonnes and CIF per kg
+are NOT estimated here; add the kg column to get them.
+Run: python3 market_size.py   (from the market/ folder)
 """
 import csv
+import os
+import sys
 from collections import defaultdict
 
-CIF_THB_PER_T = (17000, 20000, 25000)  # assumed low / mid / high landed price, 85 % grade
-OUR_COST_THB_PER_T_100 = 17500         # cost_model.py, green H2, 100 % HCOOH basis
-CO2_T_PER_T_FA = 44.01 / 46.03
-# Farmer prices reported by the team (Sep 2026), 5 kg gallon, incl. VAT and shop margin
-RETAIL_THB_PER_GALLON = (240, 380)
-WHOLESALE_THB_PER_CASE = (1570, 1800)   # case = 6 gallons = 30 kg
+HERE = os.path.dirname(os.path.abspath(__file__))
+sys.path.insert(0, os.path.dirname(HERE))
+from params import v, tag                      # noqa: E402
+from process_cost import benchmark             # noqa: E402
 
-rows = list(csv.DictReader(open("imports_hs29151100_jan.csv")))
+rows = list(csv.DictReader(open(os.path.join(HERE, "imports_hs29151100_jan.csv"))))
 total, china = defaultdict(float), defaultdict(float)
 for r in rows:
     total[r["year"]] += float(r["cif_thb"])
     if r["country"] == "CN":
         china[r["year"]] += float(r["cif_thb"])
 
-print("January CIF (million THB), China share")
+print(f"Imports, January only, CIF million THB and China share  {tag('THAI_IMPORT_JAN_THB')}")
 for y in sorted(total):
     print(f"  {y}  {total[y]/1e6:6.2f}   CN {china[y]/total[y]:5.1%}")
-avg = sum(total.values()) / len(total)
-print(f"  avg   {avg/1e6:6.2f}  -> x12 = {avg*12/1e6:.0f} million THB/yr (if January is a typical month)")
+print("  Annual value and tonnes need Jan-Dec data with quantity (kg); not estimated.")
 
-print("\nEstimated volume from assumed CIF price (avg January x 12):")
-for p in CIF_THB_PER_T:
-    t_yr = avg * 12 / p
-    print(f"  {p:>6,} THB/t -> {t_yr/12:6,.0f} t/month, {t_yr:7,.0f} t/yr, "
-          f"CO2 needed {t_yr*CO2_T_PER_T_FA*0.85:7,.0f} t/yr (85 % grade)")
+case, gallon = v("FARM_CASE_THB"), v("FARM_GALLON_THB")
+print(f"\nFarmer price, THB/kg of product  {tag('FARM_CASE_THB')}")
+print(f"  case of 6 x 5 kg   {case[0]/30:5.1f} - {case[1]/30:5.1f}")
+print(f"  single 5 kg gallon {gallon[0]/5:5.1f} - {gallon[1]/5:5.1f}")
 
-ours_85 = OUR_COST_THB_PER_T_100 * 0.85
-print(f"\nOur cost at 85 % grade ~ {ours_85:,.0f} THB/t (HCOOH content only, excludes extra water handling)")
-for p in CIF_THB_PER_T:
-    print(f"  vs import {p:>6,} THB/t: margin {p-ours_85:+7,.0f} THB/t")
-
-print("\nFarmer price (THB/kg product):")
-retail = [p / 5 for p in RETAIL_THB_PER_GALLON]
-whole = [p / 30 for p in WHOLESALE_THB_PER_CASE]
-print(f"  retail gallon   {retail[0]:5.1f} - {retail[1]:5.1f}  = {retail[0]*1000:,.0f} - {retail[1]*1000:,.0f} THB/t")
-print(f"  wholesale case  {whole[0]:5.1f} - {whole[1]:5.1f}  = {whole[0]*1000:,.0f} - {whole[1]*1000:,.0f} THB/t")
-print("\nPer 5 kg gallon (85 % grade):")
-print(f"  our production cost   {ours_85/1000*5:6.0f} THB")
-for p in CIF_THB_PER_T:
-    print(f"  import CIF @ {p:>6,}/t  {p/1000*5:6.0f} THB")
-print(f"  farmer wholesale      {whole[0]*5:6.0f} - {whole[1]*5:.0f} THB")
-print(f"  farmer retail         {RETAIL_THB_PER_GALLON[0]:6.0f} - {RETAIL_THB_PER_GALLON[1]} THB")
+grade, fx = v("GRADE"), v("USD_THB")
+ours = sum(benchmark()[0].values()) * grade * fx
+print(f"\nOur cost (process_cost.py, sourced benchmark): {ours:.2f} THB/kg of {grade:.0%} acid"
+      f" = {ours*5:.0f} THB per 5 kg")
+print(f"  farmer pays per 5 kg: {case[0]/6:.0f}-{case[1]/6:.0f} THB by the case, "
+      f"{gallon[0]}-{gallon[1]} THB single gallon")

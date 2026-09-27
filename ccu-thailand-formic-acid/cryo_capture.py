@@ -1,4 +1,8 @@
-"""Cryogenic CO2 capture with LNG cold at Bang Pakong, then dry ice -> autoclave.
+"""NOT USED IN THE CURRENT DESIGN (Sep 2026): Bang Pakong has no liquid LNG on site (its LNG is
+regasified at Map Ta Phut, SOURCES.md S17), so the team dropped LNG-cold capture in favour of
+30 wt% MEA capture with plant steam. Kept for the record; its numbers are not sourced.
+
+Cryogenic CO2 capture with LNG cold at Bang Pakong, then dry ice -> autoclave.
 
 Why CO2 freezes out and N2/O2/Ar do not is phase equilibrium, not a reaction:
 each gas condenses (or, for CO2, desublimes to dry ice) only when the temperature

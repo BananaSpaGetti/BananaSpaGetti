@@ -1,167 +1,85 @@
-"""Cost per tonne of 85 % formic acid for the team's process at Bang Pakong:
-flue gas -> LNG cold box (dry ice) -> Ru + NH3 autoclave -> ammonium formate
--> + H2SO4 -> HCOOH (distil to 85 %) + ammonium sulfate fertilizer.
+"""Cost of CO2-based formic acid at Bang Pakong, built ONLY from sourced numbers (params.py / SOURCES.md).
 
-Method (levelized cost):
-  cost/t = [ variable costs (materials + energy)
-           + fixed costs (labour, maintenance, catalyst)
-           + capital recovery (CAPEX x CRF)
-           - by-product revenue (ammonium sulfate) ] / tonnes produced per year
-  CRF = r(1+r)^n / ((1+r)^n - 1)   spreads CAPEX over the plant life like a loan payment.
-
-Every price below is an ASSUMPTION (THB, 2026) - replace with quotes from suppliers.
+Method:
+  1. Conversion cost (CO2 + H2 -> HCOOH, purification) = the published plant of
+     Tzitzili et al. 2025 (Table 5, Case A: 1.18 USD/kg at 13,030 t/yr, CO2 bought already captured).
+  2. Scale to our size: variable costs (raw materials, utilities, other) stay per kg;
+     facility-related cost follows the six-tenths rule; labour is kept as the same crew (fixed per year).
+  3. Add CO2 capture at the NGCC stack = NETL Baseline Rev 4a cost per t CO2 captured
+     x CO2 used per kg in the Tzitzili plant.
+  4. Convert to 85 % product (x 0.85: less purification than the 99.78 % acid in the study,
+     so this is on the high side) and to THB with the Bank of Thailand rate.
+Anything without a public source (Thai chemical prices, steam price, trucking, CIF per kg) is
+not used here; see SOURCES.md. The old assumption-based model: python3 process_cost.py --assumed
 Run: python3 process_cost.py
 """
+import sys
 
-M = dict(HCOOH=46.03, CO2=44.01, H2=2.016, NH3=17.031, H2SO4=98.079, AS=132.14)
-
-A = dict(
-    output_t_yr=10000,          # 85 % formic acid, ~ Thai imports (market/market_size.py)
-    grade=0.85,
-    yield_overall=0.90,         # CO2/H2/NH3 that ends up as product (losses in capture, reaction, distillation)
-    elec_thb_kwh=4.2,           # industrial grid tariff; solar PPA ~2.5-3
-    pem_kwh_per_kg_h2=55,
-    h2_compress_kwh_per_kg=3,   # PEM outlet ~30 bar -> reactor pressure
-    capture_kwh_per_t_co2=150,  # blowers, drying, pumps (cold itself comes from LNG)
-    # LNG cold: EGAT's LNG passes through the cold box as its vaporiser, then goes on to the
-    # turbines as fuel, so the gas is not used up; only the cold is borrowed (cryo_capture.py).
-    lng_t_per_t_co2=1.18,       # LNG flow through the cold box, 85 % recuperation
-    lng_premium_thb_per_t=0,    # 0 if LNG is regasified on site; trucking premium if it must be brought in
-    nh3_thb_kg=18,
-    h2so4_thb_kg=5,
-    as_thb_kg=8,                # ammonium sulfate (21-0-0) sold ex-works, below retail bag price
-    steam_gj_per_t=10,          # distillation to 85 %
-    steam_thb_gj=270,
-    water_thb_m3=30,            # RO + DI treated cooling water, 10 L per kg H2
-    as_evap_gj_per_t_as=2.0,    # evaporate/crystallise ammonium sulfate solution (double-effect)
-    route="nh3",                # "nh3": NH3 base + H2SO4 -> ammonium sulfate by-product
-                                # "amine": recyclable tertiary amine, adduct split by heat, no by-product
-    amine_kg_per_t=5,           # amine make-up (losses) per t product, amine route
-    amine_thb_kg=80,
-    amine_steam_gj_per_t=15,    # adduct splitting + distillation (replaces steam_gj_per_t)
-    amine_capex_factor=1.10,    # extra splitting column
-    catalyst_thb_per_t=500,     # Ru catalyst make-up + lab analysis (CoA)
-    maint_frac=0.03,            # maintenance, share of CAPEX per year
-    insure_frac=0.01,           # insurance, share of CAPEX per year
-    labour_thb_yr=7.8e6,        # 15 staff x 40,000 THB x 13 months
-    capex_usd=20e6,             # standalone plant at output_ref_t_yr: capture skid, PEM ~2.5 MW, reactor, separation, tanks
-    output_ref_t_yr=10000,      # size capex_usd refers to; other sizes scale with the 0.6 rule
-    usd_thb=34,
-    discount=0.08,
-    life_yr=20,
-    # sold in bulk to importers (they pack and distribute); stainless/lined tanker, hazmat driver
-    truck_load_t=20,
-    truck_trip_thb=6000,        # Bang Pakong -> importer warehouse (Bangkok / Samut Prakan area)
-    sell_thb_kg=19,             # price offered to importers, below their assumed CIF 17-25
-)
+from params import P, v, tag
 
 
-def crf(r, n):
-    return r * (1 + r) ** n / ((1 + r) ** n - 1)
-
-
-def capex(a):
-    # six-tenths rule: double the size costs ~1.5x, not 2x
-    f = a["amine_capex_factor"] if a["route"] == "amine" else 1.0
-    return f * a["capex_usd"] * (a["output_t_yr"] / a["output_ref_t_yr"]) ** 0.6
-
-
-# Unit fitted at the Bang Pakong stack instead of a separate factory: no land or buildings,
-# flue gas tapped from the duct at the stack base, LP steam and cooling water from the plant,
-# electricity at EGAT's own generation cost, shared operators.
-STACK = dict(A, elec_thb_kwh=3.0, steam_thb_gj=100, capex_usd=14e6,
-             labour_thb_yr=4.2e6)  # 8 staff; power-plant operators cover shifts
-# Formic acid is the main product, so the recommended case avoids the fertilizer by-product.
-STACK_AMINE = dict(STACK, route="amine")
-SCENARIOS = {
-    "standalone factory, NH3 route": A,
-    "at stack, NH3 route, fertilizer sold 8": STACK,
-    "at stack, NH3 route, fertilizer not sold": dict(STACK, as_thb_kg=0),
-    "at stack, amine route (recommended)": STACK_AMINE,
-    "at stack, amine route + solar PPA 2.5": dict(STACK_AMINE, elec_thb_kwh=2.5),
-    "at stack, amine, LNG trucked in (+2,500/t)": dict(STACK_AMINE, lng_premium_thb_per_t=2500),
-    "at stack, amine route, pilot 1,000 t/yr": dict(STACK_AMINE, output_t_yr=1000),
-}
-
-
-def cost(a):
-    fa = a["grade"] / a["yield_overall"]          # t HCOOH-equivalent of feed per t product
-    co2 = fa * M["CO2"] / M["HCOOH"]              # t
-    h2 = fa * M["H2"] / M["HCOOH"] * 1000         # kg
-    nh3 = fa * M["NH3"] / M["HCOOH"]              # t, consumed (leaves as ammonium sulfate)
-    h2so4 = fa * M["H2SO4"] / 2 / M["HCOOH"]      # t
-    as_t = a["grade"] * M["AS"] / 2 / M["HCOOH"]  # t sold (on product actually made)
-    items = {
-        "H2 (PEM electricity)": h2 * a["pem_kwh_per_kg_h2"] * a["elec_thb_kwh"],
-        "H2 compression": h2 * a["h2_compress_kwh_per_kg"] * a["elec_thb_kwh"],
-        "water for PEM": h2 * 0.01 * a["water_thb_m3"],
-        "CO2 capture (LNG cold)": co2 * (a["capture_kwh_per_t_co2"] * a["elec_thb_kwh"]
-                                         + a["lng_t_per_t_co2"] * a["lng_premium_thb_per_t"]),
+def benchmark(target_t=None, capture_usd_t=None):
+    target_kg = (target_t or v("TARGET_T_YR")) * 1000 * v("GRADE")      # kg HCOOH (100 %)
+    s = target_kg / v("FA_PLANT_KG_YR")                                  # size ratio vs study plant
+    split = v("FA_OPEX_SPLIT")
+    other = 1 - sum(split.values())
+    base = v("FA_UNIT_COST_USD_KG")
+    per_kg = {                                                           # USD per kg HCOOH
+        "raw materials (H2, CO2 price in study, amine, catalyst)": base * split["raw_materials"],
+        "utilities (power, steam, chilled water)": base * split["utilities"],
+        "other operating": base * other,
+        "facility-related (scaled 0.6 rule)": base * split["facility"] * s ** (v("SCALE_EXP") - 1),
+        "labour (same crew)": base * split["labour"] / s,
     }
-    if a["route"] == "nh3":
-        items.update({
-            "ammonia NH3": nh3 * 1000 * a["nh3_thb_kg"],
-            "sulfuric acid H2SO4": h2so4 * 1000 * a["h2so4_thb_kg"],
-            "steam (distillation)": a["steam_gj_per_t"] * a["steam_thb_gj"],
-            "fertilizer drying (steam)": as_t * a["as_evap_gj_per_t_as"] * a["steam_thb_gj"],
-        })
-    else:
-        items.update({
-            "amine make-up": a["amine_kg_per_t"] * a["amine_thb_kg"],
-            "steam (split + distil)": a["amine_steam_gj_per_t"] * a["steam_thb_gj"],
-        })
-    items.update({
-        "catalyst + lab analysis": a["catalyst_thb_per_t"],
-        "maintenance + insurance": capex(a) * a["usd_thb"] * (a["maint_frac"] + a["insure_frac"]) / a["output_t_yr"],
-        "labour": a["labour_thb_yr"] / a["output_t_yr"],
-        "CAPEX recovery": capex(a) * a["usd_thb"] * crf(a["discount"], a["life_yr"]) / a["output_t_yr"],
-    })
-    if a["route"] == "nh3":
-        items["ammonium sulfate sold"] = -as_t * 1000 * a["as_thb_kg"]
-    flows = dict(co2=co2, h2=h2, nh3=nh3, h2so4=h2so4, as_t=as_t)
-    return items, flows
+    co2_per_kg = v("FA_CO2_KG_YR") / v("FA_PLANT_KG_YR")
+    per_kg["CO2 capture at NGCC stack"] = co2_per_kg * (capture_usd_t or v("CAPTURE_USD_T")) / 1000
+    return per_kg, s, co2_per_kg
 
 
-def main(a=A):
-    items, f = cost(a)
-    total = sum(items.values())
-    gross = sum(v for v in items.values() if v > 0)
-    print(f"Per tonne of {a['grade']:.0%} formic acid (plant {a['output_t_yr']:,} t/yr, "
-          f"overall yield {a['yield_overall']:.0%}):")
-    if a["route"] == "nh3":
-        print(f"  uses  CO2 {f['co2']:.3f} t, H2 {f['h2']:.1f} kg, NH3 {f['nh3']:.3f} t, "
-              f"H2SO4 {f['h2so4']:.3f} t;  makes ammonium sulfate {f['as_t']:.2f} t")
-    else:
-        print(f"  uses  CO2 {f['co2']:.3f} t, H2 {f['h2']:.1f} kg; amine recycled, no by-product")
-    for k, v in items.items():
-        print(f"  {k:26s} {v:9,.0f} THB/t  ({v/gross:5.0%} of gross)")
-    print(f"  {'TOTAL':26s} {total:9,.0f} THB/t = {total/1000:.1f} THB/kg")
-    truck = a["truck_trip_thb"] / a["truck_load_t"]
-    delivered = total + truck
-    trips = a["output_t_yr"] / a["truck_load_t"]
-    print(f"\nBulk delivery to importer: {a['truck_trip_thb']:,} THB per {a['truck_load_t']} t tanker "
-          f"= {truck:,.0f} THB/t; {trips:,.0f} trips/yr")
-    print(f"Delivered cost {delivered:,.0f} THB/t = {delivered/1000:.2f} THB/kg  (importer's CIF assumed 17-25)")
-    m = a["sell_thb_kg"] * 1000 - delivered
-    print(f"Sell at {a['sell_thb_kg']} THB/kg -> margin {m:,.0f} THB/t x {a['output_t_yr']:,} t "
-          f"= {m*a['output_t_yr']/1e6:,.1f} M THB/yr")
+def main():
+    if "--assumed" in sys.argv:
+        import process_cost_assumed
+        process_cost_assumed.main(process_cost_assumed.STACK_AMINE)
+        return
 
-    print("\nSensitivity (THB/kg):")
-    chem = ([("nh3_thb_kg", 12, 25), ("as_thb_kg", 4, 12)] if a["route"] == "nh3"
-            else [("amine_thb_kg", 40, 160), ("amine_steam_gj_per_t", 10, 20)])
-    for key, lo, hi in [("elec_thb_kwh", 2.5, 5.0)] + chem + [("capex_usd", 10e6, 40e6),
-                        ("yield_overall", 0.8, 0.95), ("output_t_yr", 3000, 20000)]:
-        v = [sum(cost(dict(a, **{key: x}))[0].values()) / 1000 for x in (lo, hi)]
-        print(f"  {key:16s} {lo:>10g} -> {v[0]:5.1f} | {hi:>10g} -> {v[1]:5.1f}")
+    fx, grade = v("USD_THB"), v("GRADE")
+    per_kg, s, co2_per_kg = benchmark()
+    total = sum(per_kg.values())
 
+    print("Inputs:")
+    for k in ("FA_UNIT_COST_USD_KG", "FA_PLANT_KG_YR", "FA_OPEX_SPLIT", "FA_CO2_KG_YR",
+              "CAPTURE_USD_T", "TARGET_T_YR", "GRADE", "SCALE_EXP", "USD_THB"):
+        print(f"  {k:20s} {str(v(k))[:60]:60s} {P[k]['unit'][:34]:34s} {tag(k)}")
 
-def compare():
-    print("\nScenarios (THB/kg of 85 % formic acid):")
-    for name, a in SCENARIOS.items():
-        items, _ = cost(a)
-        print(f"  {name:44s} {sum(items.values())/1000:5.1f}   CAPEX {capex(a)/1e6:5.1f} M USD")
+    print(f"\nOur plant: {v('TARGET_T_YR'):,} t/yr of {grade:.0%} acid = {s:.3f} x the study plant; "
+          f"CO2 {co2_per_kg:.3f} kg per kg HCOOH")
+    print(f"{'':58s}{'USD/kg HCOOH':>14s}{'THB/kg 85 %':>14s}")
+    for k, x in per_kg.items():
+        print(f"  {k:56s}{x:14.3f}{x * grade * fx:14.2f}")
+    print(f"  {'TOTAL':56s}{total:14.3f}{total * grade * fx:14.2f}")
+    print("  note: if the study's raw materials already include a CO2 purchase price (its Table S16),")
+    print("        the capture line partly double-counts, so the total is on the high side.")
+
+    lo = sum(benchmark(capture_usd_t=v("CAPTURE_USD_T"))[0].values())
+    hi = sum(benchmark(capture_usd_t=v("CAPTURE_USD_T_REV4"))[0].values())
+    print(f"  capture 61-80 USD/t (NETL Rev 4a / Rev 4): {lo*grade*fx:.2f}-{hi*grade*fx:.2f} THB/kg 85 %")
+    at_study = v("FA_UNIT_COST_USD_KG") + co2_per_kg * v("CAPTURE_USD_T") / 1000
+    print(f"  at the study's own size (13,030 t/yr): {at_study*grade*fx:.2f} THB/kg 85 %")
+
+    print("\nCompare (per kg of 85 % acid):")
+    print(f"  study's selling price 1.40 USD/kg     {v('FA_PRICE_USD_KG')*grade*fx:6.2f} THB  {tag('FA_PRICE_USD_KG')}")
+    print(f"  study's minimum selling price 1.36    {v('FA_MSP_USD_KG')*grade*fx:6.2f} THB  {tag('FA_MSP_USD_KG')}")
+    c = v("FARM_CASE_THB")
+    print(f"  farmer buys by the case (6 x 5 kg)    {c[0]/30:6.2f}-{c[1]/30:.2f} THB  {tag('FARM_CASE_THB')}")
+    print("  import CIF per kg                     unknown: needs import quantity in kg (SOURCES.md)")
+
+    h2_kg = v("M_H2") / v("M_HCOOH")
+    pem_thb = h2_kg * v("PEM_KWH_KG") * v("ELEC_THB_KWH")
+    print(f"\nFor reference: making our own H2 by PEM at the average Thai tariff costs "
+          f"{h2_kg:.4f} kg x {v('PEM_KWH_KG')} kWh x {v('ELEC_THB_KWH')} THB = {pem_thb:.2f} THB per kg HCOOH "
+          f"{tag('PEM_KWH_KG')} {tag('ELEC_THB_KWH')}")
+    print("  (the study buys H2; its H2 price is in Supplementary Table S16, not in the PDF)")
 
 
 if __name__ == "__main__":
-    main(STACK_AMINE)
-    compare()
+    main()
