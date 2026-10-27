@@ -11,9 +11,9 @@
 ## About me
 
 - 🎓 Studying Computer Engineering in Thailand
-- 🩻 Recently: an own pipeline for the RSNA Knee MRI competition on Kaggle (12 findings from raw DICOM)
+- 🤖 Building machine learning projects: computer vision, tabular models and LLM tools
 - 📊 Publishing cleaned Thai public datasets and notebooks on Kaggle
-- 🌱 Learning: deep learning for medical imaging, databases (SQL / NoSQL), UX/UI
+- 🌱 Learning: deep learning, databases (SQL / NoSQL), UX/UI
 
 ## Featured projects
 
