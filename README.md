@@ -2,6 +2,9 @@
 
 Computer Engineering student from Thailand, focused on software development.
 
+[![Kaggle](https://img.shields.io/badge/Kaggle-patimakornsrinamen-20BEFF?style=flat-square&logo=kaggle&logoColor=white)](https://www.kaggle.com/patimakornsrinamen)
+[![LinkedIn](https://img.shields.io/badge/LinkedIn-Patimakorn-0A66C2?style=flat-square&logo=linkedin&logoColor=white)](https://www.linkedin.com/in/patimakorn-srinam-en-31907042b)
+
 ## Tech
 
 ![Python](https://img.shields.io/badge/Python-3776AB?style=flat-square&logo=python&logoColor=white)
@@ -18,5 +21,6 @@ Currently learning C, Git & GitHub, databases (SQL / NoSQL), and UX/UI.
 
 | Project | Description |
 |---------|-------------|
+| [rsna-knee-mri](https://github.com/BananaSpaGetti/rsna-knee-mri) | Own pipeline for the Kaggle RSNA Knee Abnormality Detection competition: DICOM pixel cache, LLM report labels, 2.5D CoAtNet/ConvNeXt models. Best late entry 0.946 private AUC. |
 | [sas4-save-editor](https://github.com/BananaSpaGetti/sas4-save-editor) | Read, edit, and re-checksum SAS: Zombie Assault 4 save files. CLI and a Tk GUI, pure Python. |
 | [memscope](https://github.com/BananaSpaGetti/memscope) | A general memory scanner for 64-bit Windows processes: scan, narrow, and pointer-scan. One file, pure Python. |
