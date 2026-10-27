@@ -6,7 +6,6 @@
 <p align="center">
   <a href="https://www.kaggle.com/patimakornsrinamen"><img src="https://img.shields.io/badge/Kaggle-patimakornsrinamen-20BEFF?style=for-the-badge&logo=kaggle&logoColor=white" alt="Kaggle"></a>
   <a href="https://www.linkedin.com/in/patimakorn-srinam-en-31907042b"><img src="https://img.shields.io/badge/LinkedIn-Patimakorn-0A66C2?style=for-the-badge&logo=linkedin&logoColor=white" alt="LinkedIn"></a>
-  <a href="https://www.instagram.com/gett_patimakorn/"><img src="https://img.shields.io/badge/Instagram-gett__patimakorn-E4405F?style=for-the-badge&logo=instagram&logoColor=white" alt="Instagram"></a>
 </p>
 
 ## About me
