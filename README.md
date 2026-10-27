@@ -56,3 +56,8 @@
 <p align="center">
   <img src="https://streak-stats.demolab.com?user=BananaSpaGetti&hide_border=true&theme=transparent" alt="Contribution streak">
 </p>
+
+<picture>
+  <source media="(prefers-color-scheme: dark)" srcset="https://raw.githubusercontent.com/BananaSpaGetti/BananaSpaGetti/output/github-snake-dark.svg">
+  <img alt="Contribution snake" src="https://raw.githubusercontent.com/BananaSpaGetti/BananaSpaGetti/output/github-snake.svg">
+</picture>
