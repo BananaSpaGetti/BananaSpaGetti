@@ -10,10 +10,10 @@
 
 ## About me
 
-- 🎓 Studying Computer Engineering in Thailand
-- 🤖 Building machine learning projects: computer vision, tabular models and LLM tools
-- 📊 Publishing cleaned Thai public datasets and notebooks on Kaggle
-- 🌱 Learning: deep learning, databases (SQL / NoSQL), UX/UI
+-  Studying Computer Engineering in Thailand
+-  Building machine learning projects: computer vision, tabular models and LLM tools
+-  Publishing cleaned Thai public datasets and notebooks on Kaggle
+-  Learning: deep learning, databases (SQL / NoSQL), UX/UI
 
 ## Featured projects
 
